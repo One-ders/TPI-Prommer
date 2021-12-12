@@ -103,6 +103,11 @@ Because of this the image must be programmed to 0xC000-0xFFFF.
 
 ![Board with Calpack](./pics/259091404_477744637000775_3731667812235962616_n.jpg?raw=true "Bord with Calpack")
 
+Adding Level shifters for 12Volts pins on 27SF512 (Winbond 27C512).
+One more would be needed for burning the original 27C128.
+![Board with 12V levelshifters](./pics/264455280_726742265382862_1499498962192463802_n.jpg?raw=true "Bord with 12V level shifters")
+
+
 
 The blackpill stm32411 board pin out:
 ![Blackpill](./pics/STM32F4x1_PinoutDiagram_RichardBalint.png?raw=true "stm32f411 blackpill")
