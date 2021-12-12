@@ -26,7 +26,7 @@ DOBJS=$(patsubst %, $(OBJ)/drv_obj/%, $(DRIVERS))
 
 
 
-usr.bin.o: $(OBJ)/usr/sys_cmd/sys_cmd.o $(LOBJ)/usr/promread.o
+usr.bin.o: $(OBJ)/usr/sys_cmd/sys_cmd.o $(OBJ)/usr/pin_test/pin_test.o $(LOBJ)/usr/promread.o
 	$(LD) -o $(LOBJ)/usr/usr.bin.o $(LDFLAGS_USR) $^
 	$(OBJCOPY) --prefix-symbols=__usr_ $(LOBJ)/usr/usr.bin.o
 

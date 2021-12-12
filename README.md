@@ -33,5 +33,30 @@ This is the board,
 - VSS to ground.
 - VDD to 5V.
 
+----------------------------------
+
+Mods to enable programming and using the SST 27SF512.
+
+Add a 12 volts source, a 5 to 12 stepup converter or an external source.
+
+add lines B15 to to pin 27, it corresponds to /PGM on the 27C128 and
+should be hi when reading (missed in the version above).
+This pin is A14 27SF512.
+connect A15 to a cascaded npn/pnp transistor, so that 3 volts in on
+the base of the npn, will make it open, and the collector will sink the
+base of the pnp that has its emitter to 12 volt. the collector of the
+pnp should go via a diode to prom A9. The original prom A9 should have a
+diode from gpio b9 to prom a9.
+
+This will make it possible to output 3 levels to prom, 0 volt low, 3.3 volts hi.
+and 12 volts program hi.
+
+GPIO C14 to pin 1 eeprom A15, (which is VPP on the 27C18).
+GPIO C15 to 12 volt level shifter as described above.
+
+The pins 1 (A15) and 22 (OE/VPP) of the eeprom will always be high
+when the ecm reads the prom.
+Because of this the image must be programmed to 0xC000-0xFFFF.
+
 ![Board with Calpack](./pics/259091404_477744637000775_3731667812235962616_n.jpg?raw=true "Bord with Calpack")
 -------------------------------------------------------
