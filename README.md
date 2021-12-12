@@ -13,25 +13,63 @@ of the OS. then do Make.
 I have build it against the small board called "BlackPill", running an
 STM32F411 and costs less than 10$ on ali express.
 
-To read a prob. start the board. connect a terminal emulator, minicom f.ex.
-on linux the BlackPill board will publis dev /dev/ttyACM0.
+To read a prom. start the board. connect a terminal emulator, minicom f.ex.
+on linux the BlackPill board will publish dev /dev/ttyACM0.
 
-then at the prompt write promrd <CR>, then at the new prompt
-write read_prom <CR>
+then at the prompt write prom <CR>, then at the new prompt
+write read <CR>
 
 the prom data will be dumped on the screen in Intel hex format.
 You can used the terminal emulator to capture the screen.
 
+For burning, (today only tested with ebay 27SF512 fakes, that seems to work),
+make sure the chip is properly erased (dump it and verify 0xff in all bytes).
+
+else run an erase.
+
+1. at the prompt do: prom<CR>
+2. configure 27SF512<CR>
+3. erase
+
+If it fails try to power cycle the chip by removing and re-inserting the
+usb connector, and continue from point 1.
+
+To burn a file, first obtain a wanted binary...
+either in Intel hex format, or use gnu objcopy or similar to convert to
+ihex...
+Edit the file and surround the text with the lines:
+to start with
+******************* IHEX ******************
+
+and end with
+*************** End IHEX ******************
+
+. after configuring 27SF512
+give cmd: burn<CR>
+
+The program will tell you to transfer the file using the terminal emulator,
+on linux use minicom, hit ctrl-A, S, select ascii , etc.
+
+When using 27SF512 as a replacement for the 27C128, the image needs to be
+offset towards the upper 16K region of the chip. This is because the upper
+address pin A14-A15 on 27SF512, corresponds to VPP and PGM on 27C128 and they
+are HI during normal read. So to use 27SF512  for an L98 system do:
+burn -o 0xC000<CR>.
 
 ![Board](./pics/259596032_1619722048384723_8285664125914974745_n.jpg?raw=true "Board")
 
 This is the board,
 - D0-D7 of the prom shall go to GPIO pins A1-A8
-- A0-A13 of the prom shall go to GPIO pins B0-B10,B12-B14.
-- CE of the prom to GPIO C13, will give a flashing blue led during reading.
-- OE of the prom to GPIO A0.
+- A0-A14 of the prom shall go to GPIO pins B0-B10,B12-B15.
+- A15 of the prom connects to GPIO pin A9
+-- B9 to A9 needs a detour via a level shifter, since the pin is also used on SF512
+   as ERASE pin (A9 12v GPIO PA15)
+- CE of the prom to GPIO C13, will give a flashing blue led during chip select.
+- OE of the prom via level shifter to GPIO A0.
+- OE of the prom is used on SF512 as VPP during program, GPIO pin PA10 to level shifter.
 - VSS to ground.
 - VDD to 5V.
+
 
 ----------------------------------
 
@@ -48,6 +86,8 @@ base of the pnp that has its emitter to 12 volt. the collector of the
 pnp should go via a diode to prom A9. The original prom A9 should have a
 diode from gpio b9 to prom a9.
 
+![LevelShifter](./pics/levelshift.png?raw=true "levelshifter")
+
 This will make it possible to output 3 levels to prom, 0 volt low, 3.3 volts hi.
 and 12 volts program hi.
 
@@ -59,4 +99,9 @@ when the ecm reads the prom.
 Because of this the image must be programmed to 0xC000-0xFFFF.
 
 ![Board with Calpack](./pics/259091404_477744637000775_3731667812235962616_n.jpg?raw=true "Bord with Calpack")
+
+
+The blackpill stm32411 board pin out:
+![Blackpill](./pics/STM32F4x1_PinoutDiagram_RichardBalint.png?raw=true "stm32f411 blackpill")
+
 -------------------------------------------------------
