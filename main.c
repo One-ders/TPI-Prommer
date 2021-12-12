@@ -62,11 +62,13 @@ static int testA0A7(int argc, char **argv, struct Env *env);
 static int testA6A13(int argc, char **argv, struct Env *env);
 static int erase_prom(int argc, char **argv, struct Env *env);
 static int burn_prom(int argc, char **argv, struct Env *env);
+static int read_id(int argc, char **argv, struct Env *env);
 
 static struct cmd cmds[] = {
 	{"help", generic_help_fnc},
 	{"config", config},
 	{"unconfig", unconfig},
+	{"id", read_id},
 	{"testA0A7", testA0A7},
 	{"testA6A13", testA6A13},
 	{"read", read_prom},
@@ -615,6 +617,35 @@ static int burn_prom(int argc, char **argv, struct Env *env) {
 	sleep(1000);
 	fprintf(env->io_fd, "\n\nburn prom done\n");
 	return rc;
+}
+
+static int read_id(int argc, char **argv, struct Env *env) {
+	int rc;
+	int one=1;
+	int zero=0;
+	unsigned short int id=0;
+	if (!configured) {
+		fprintf(env->io_fd, "configure any chip first!");
+		return -1;
+	}
+
+	rc=io_control(pa9_12v_fd, GPIO_SET_PIN, &one, sizeof(one));
+	if (rc<0) {
+		fprintf(env->io_fd, "read id: failed to activate pa9_12v pin\n");
+		return -1;
+	}
+
+	id=(read_byte(0)<<8)|read_byte(1);
+
+
+	rc=io_control(pa9_12v_fd, GPIO_SET_PIN, &zero, sizeof(zero));
+	if (rc<0) {
+		fprintf(env->io_fd, "read id: failed to deactivate pa9_12v pin\n");
+		return -1;
+	}
+
+	fprintf(env->io_fd, "ID of chip is 0x%04x\n",id);
+	return 0;
 }
 
 static int set_write_mode_databus(int io_fd) {

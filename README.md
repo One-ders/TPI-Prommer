@@ -25,6 +25,9 @@ You can used the terminal emulator to capture the screen.
 For burning, (today only tested with ebay 27SF512 fakes, that seems to work),
 make sure the chip is properly erased (dump it and verify 0xff in all bytes).
 
+(After doing an ID read on the chip, it identifies as WINBOND W27C512.
+It seems to work but should have 14 volts for erase).
+
 else run an erase.
 
 1. at the prompt do: prom<CR>
@@ -39,10 +42,10 @@ either in Intel hex format, or use gnu objcopy or similar to convert to
 ihex...
 Edit the file and surround the text with the lines:
 to start with
-******************* IHEX ******************
+- ******************* IHEX ******************
 
 and end with
-*************** End IHEX ******************
+- *************** End IHEX ******************
 
 . after configuring 27SF512
 give cmd: burn<CR>
